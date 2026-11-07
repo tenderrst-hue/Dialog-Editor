@@ -1,0 +1,18 @@
+{
+  "id": "dialog-editor",
+  "name": "Dialog Editor",
+  "version": "0.1",
+  "author": "я",
+  "description": "Редактор диалогов: список реплик (кто говорит и что), выберите и впишите свой текст. Правки сохраняются сами и применяются при каждом запуске. Кнопка «Диал.» на экране открывает окно.",
+  "libs": ["libs/arm64-v8a/libdialogeditor.so"],
+  "settings": [
+    { "id": "ed_on", "type": "bool", "name": "Окно редактора диалогов", "default": false },
+    { "id": "pause", "type": "bool", "name": "Пауза при открытом окне", "default": true },
+    { "id": "ui_h", "type": "float", "name": "Размер окна (меньше = крупнее)", "min": 240, "max": 600, "default": 360, "control": "slider" },
+    { "id": "filter", "type": "string", "name": "Поиск", "description": "Часть текста, имени или ключа. Пусто = всё", "default": "" },
+    { "id": "new_text", "type": "string", "name": "Новый текст (запасной способ)", "description": "Если системная клавиатура не открывается: впишите текст здесь и нажмите «Из настройки» в окне", "default": "" }
+  ],
+  "hud": [
+    { "label": "Диал.", "setting": "ed_on", "action": "toggle", "pos": "left" }
+  ]
+}
