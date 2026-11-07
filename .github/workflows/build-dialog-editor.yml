@@ -1,0 +1,54 @@
+name: Build Dialog Editor
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "sdk/mods/dialog-editor/**"
+      - ".github/workflows/build-dialog-editor.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Dialog Editor
+        uses: actions/checkout@v4
+        with:
+          path: project
+
+      - name: Checkout Bearite SDK
+        uses: actions/checkout@v4
+        with:
+          repository: Sp1KLe/Bearite
+          ref: main
+          path: bearite
+
+      - name: Install Android NDK
+        run: |
+          SDKM="$(find "$ANDROID_HOME/cmdline-tools" -path "*/bin/sdkmanager" | sort -V | tail -n 1)"
+          test -n "$SDKM"
+          yes | "$SDKM" --licenses >/dev/null || true
+          "$SDKM" "ndk;26.1.10909125"
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/26.1.10909125" >> "$GITHUB_ENV"
+
+      - name: Prepare Dialog Editor in Bearite SDK
+        run: |
+          test -f bearite/sdk/build-mod.sh
+          test -f bearite/sdk/bearite_api.h
+          test -f bearite/sdk/bearite_il2cpp.h
+          test -d project/sdk/mods/dialog-editor
+          mkdir -p bearite/sdk/mods
+          rm -rf bearite/sdk/mods/dialog-editor
+          cp -a project/sdk/mods/dialog-editor bearite/sdk/mods/
+
+      - name: Build Dialog Editor (arm64-v8a)
+        run: |
+          cd bearite/sdk
+          bash build-mod.sh mods/dialog-editor ../../dist
+
+      - name: Upload Dialog Editor ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: dialog-editor
+          path: dist/dialog-editor.zip
+          if-no-files-found: error
