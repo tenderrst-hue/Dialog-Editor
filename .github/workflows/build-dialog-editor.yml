@@ -30,6 +30,11 @@ jobs:
           "$SDKM" "ndk;26.1.10909125"
           echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/26.1.10909125" >> "$GITHUB_ENV"
 
+      - name: Restore mod source
+        run: |
+          base64 -d project/sdk/mods/dialog-editor/src/mod.c.gz.b64 | gzip -d > project/sdk/mods/dialog-editor/src/mod.c
+          test -s project/sdk/mods/dialog-editor/src/mod.c
+
       - name: Prepare mod in Bearite SDK
         run: |
           test -f bearite/sdk/build-mod.sh
